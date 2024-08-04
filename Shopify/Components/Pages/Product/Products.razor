@@ -1,0 +1,51 @@
+﻿@using Shopify.Components.Services.ProductService
+@using Shopify.Models
+@inject IProductService ProductService
+
+<ul class="list-unstyled">
+
+
+    @foreach (var product in products)
+{
+    <li >
+        <div>
+            <a href="/product/@product.Id">
+                <img class="media-img" src="@product.Image" alt="@product.Title" style="max-height:100px; max-width:100px;" />
+            </a>
+        </div>
+        <div >
+            <a href="/product/@product.Id">
+                <h4 >@product.Title</h4>
+            </a>
+            <p>@product.Description</p>
+            <h5 class="price">
+                    $ @ProductService.GetPrice(product.Id)
+            </h5>
+            <h6 class="text-decoration-line-through text-danger">$ @product.Price</h6>
+        </div>
+    </li>
+    <hr />
+}
+</ul>
+
+
+@code {
+    [Parameter]
+    public string CategoryId { get; set; }
+    List<Product> products = new List<Product>();
+    protected override void OnInitialized()
+    {
+        ProductService.LoadProducts();
+        if(CategoryId != null)
+        {
+            products = ProductService.Products.FindAll(p => p.CategoryId == Convert.ToInt32(CategoryId));
+
+        }
+        else
+        {
+            products = ProductService.Products;
+
+        }
+    }
+   
+}

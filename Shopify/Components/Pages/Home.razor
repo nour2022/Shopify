@@ -1,0 +1,37 @@
+﻿@using Shopify.Components.Pages.Product
+@using Shopify.Components.Services.CategoryService
+@using Shopify.Models
+@page "/"
+@page "/{categoryurl}"
+@inject ICategoryService CategoryService
+
+@if(category is null)
+{
+    <h2>Welcome to ShopiFy.</h2>
+    <Products></Products>
+    
+}else{
+    <h2>Welcome to @category.Name Section</h2>
+    <Products categoryId="@category.Id.ToString()"/>
+}
+
+@code{
+    [Parameter]
+    public string categoryURL { get; set; }
+
+    private Category category = new Category();
+
+    protected override void OnParametersSet()
+    {
+        if(categoryURL != null)
+        {
+            CategoryService.LoadCategories();
+            category = CategoryService.categories.FirstOrDefault(c => c.Url.ToLower().Equals(categoryURL.ToLower()));
+        }
+        else
+        {
+            category = null;
+        }
+    }
+
+}

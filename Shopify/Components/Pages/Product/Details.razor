@@ -1,0 +1,38 @@
+﻿@page "/product/{id}"
+@using Shopify.Components.Services.ProductService
+@using Shopify.Models
+@inject IProductService ProductService
+<h4>@product.Title</h4>
+
+<div class="media">
+    <div >
+        <img src="@product.Image" alt="@product.Title" />
+    </div>
+    <div class="media-body">
+        <h2>@product.Title</h2>
+        <p>@product.Description</p>
+        @if (Decimal.Parse(ProductService.GetPrice(product.Id)) < product.Price)
+        {
+            <h6 class="text-muted">Instead of $@product.Price</h6>
+        }
+        <h4>
+            $@ProductService.GetPrice(product.Id)
+        </h4>
+        <button class="btn btn-primary"><i class="oi oi-cart"></i>&nbsp;&nbsp;&nbsp;Add to Cart</button>
+    </div>
+
+</div>
+
+
+
+@code {
+    [Parameter]
+    public string Id { get; set; }
+    private Product product = null ;
+    protected override void OnInitialized()
+    {
+        if (ProductService.Products is null || ProductService.Products.Count == 0)
+            ProductService.LoadProducts();
+        product = ProductService.Products.FirstOrDefault(p => p.Id == Int32.Parse(Id));
+    }
+}
